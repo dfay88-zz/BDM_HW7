@@ -1,6 +1,6 @@
 import csv
 from geopy.distance import vincenty
-from pyspark.sql import sqlContext, Row
+from pyspark.sql import SQLContext, Row
 from pyspark.sql.types import *
 from pyspark.sql.functions import *
 from pyspark import SparkContext
@@ -44,12 +44,12 @@ def main(sc):
     taxiTrips = taxi.mapPartitionsWithIndex(extractTaxiTrips).map(createTimeWindow)
 
     schema = StructType([StructField('drop_off_time_begin', StringType()), StructField('drop_off_time_end', StringType())])
-    taxi_df = sqlContext.createDataFrame(taxiTrips, schema)
+    taxi_df = SQLContext.createDataFrame(taxiTrips, schema)
     taxi_df = taxi_df.select(taxi_df['drop_off_time_begin'].cast('timestamp'), taxi_df['drop_off_time_end'].cast('timestamp'))
 
 
     schema = StructType([StructField('time', StringType()), StructField('bikeid', StringType())])
-    citibike_df = sqlContext.createDataFrame(bikeTrips, schema)
+    citibike_df = SQLContext.createDataFrame(bikeTrips, schema)
     citibike_df = citibike_df.select(citibike_df['time'].cast('timestamp'), citibike_df['bikeid'])
 
 
