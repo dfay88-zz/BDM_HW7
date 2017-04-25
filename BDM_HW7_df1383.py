@@ -1,6 +1,6 @@
 import csv
 from geopy.distance import vincenty
-from pyspark.sql import SQLContext, Row
+from pyspark.sql import sqlContext, Row
 from pyspark.sql.types import *
 from pyspark.sql.functions import *
 from pyspark import SparkContext
