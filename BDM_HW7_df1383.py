@@ -4,6 +4,7 @@ from pyspark.sql import SQLContext, Row
 from pyspark.sql.types import *
 from pyspark.sql.functions import *
 from pyspark import SparkContext
+from pyspark.sql import HiveContext
 import datetime
 
 
