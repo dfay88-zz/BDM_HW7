@@ -43,17 +43,15 @@ def main(sc):
     bikeTrips = citibike.mapPartitionsWithIndex(extractBikeTrips)
     taxiTrips = taxi.mapPartitionsWithIndex(extractTaxiTrips).map(createTimeWindow)
 
-    schema = StructType([StructField('drop_off_time_begin', StringType()), StructField('drop_off_time_end', StringType())])
-    taxi_df = SQLContext.createDataFrame(taxiTrips, schema)
+    taxi_df = taxiTrips.toDF(['drop_off_time_begin', 'drop_off_time_end'])
     taxi_df = taxi_df.select(taxi_df['drop_off_time_begin'].cast('timestamp'), taxi_df['drop_off_time_end'].cast('timestamp'))
 
 
-    schema = StructType([StructField('time', StringType()), StructField('bikeid', StringType())])
-    citibike_df = SQLContext.createDataFrame(bikeTrips, schema)
+    citibike_df = bikeTrips.toDF(['time', 'bikeid'])
     citibike_df = citibike_df.select(citibike_df['time'].cast('timestamp'), citibike_df['bikeid'])
 
 
-    matched_trips = taxi_df.join(citibike_df).filter(taxi_df.drop_off_time_begin <                 citibike_df.time).filter(citibike_df.time < taxi_df.drop_off_time_end).dropDuplicates(['time','bikeid'])
+    matched_trips = taxi_df.join(citibike_df).filter(taxi_df.drop_off_time_begin < citibike_df.time).filter(citibike_df.time < taxi_df.drop_off_time_end).dropDuplicates(['time','bikeid'])
 
 
     print matched_trips.count()
